@@ -1,0 +1,9 @@
+extends ../base
+block title
+    | Admin Page
+block container
+    h1 Admin
+    form.form1#form1(name="students",action="/admin",method="POSt" )
+        input#username(type="text", name="username")
+        input#pass(type="password", name="password")
+        input(type="submit", value="Submit")
