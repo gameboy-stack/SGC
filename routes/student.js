@@ -128,7 +128,7 @@ router.get("/dashboard/:id",issessionedUser2,async (req,res) => {
 
 });
 
-router.get("/dashboard/:id",issessionedUser2,async (req,res) => {
+router.post("/dashboard/:id",issessionedUser2,async (req,res) => {
         const repid = req.params.id;
         const selectedreport = await Reports.findOne({_id:repid,dept:req.session.dept});
         console.log(selectedreport);

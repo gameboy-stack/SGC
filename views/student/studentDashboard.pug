@@ -55,7 +55,9 @@ block container
                                     cite(title='Source Title') #{"  &  " + rep.gstatus }                   
                         .card-footer 
                             .d-flex.justify-content-center.p-1
-                                a(href="",style="margin-right:2rem ;") 
-                                    button.btn.btn-outline-primary Support    
+                                
+                                button.btn.btn-outline-primary#support(style="margin-right:2rem ;" data-liked="" data-repid="") Support    
                                 a.btn.btn-outline-primary(href="/student/dashboard/"+rep._id) Read More
+block reqJs
+    script(src="../../public/js/like.js") 
 

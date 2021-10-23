@@ -40,7 +40,7 @@ block container
                     input.form-control#username(type='text' value=username name="username"  disabled='')
                 .form-group.mb-2
                     label.form-label.mb-2(for='deptname') Department :
-                    input.form-control#deptname(type='text' value=dept name="deptname" disabled='')
+                    input.form-control#deptname(type='text' value=dept.toUpperCase() name="deptname" disabled='')
                 .form-group.mb-2
                     label.form-label.mb-2(for='rollno') Roll No :
                     input#rollno.form-control(type='text' value=rollno name="rollno" disabled='')
