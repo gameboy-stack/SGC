@@ -1,12 +1,55 @@
-const supportButton = document.getElementById("support")
+const clicked = (ele) => {
 
-supportButton.addEventListener("click", () => {
-    const isLiked = supportButton.dataset.liked;
-    const repid = supportButton.dataset.repid;
-    fetch(`/student/dashboard/${repid}`)
-    .then(response => response.text())
-    .then(data => console.log(data));
-});
+    const isLiked = ("true" === ele.dataset.liked);
+    const repid = ele.dataset.repid;
+
+    console.log(isLiked);
+    console.log(repid);
+
+    if(!isLiked){
+          ele.innerHTML = "Supported !!!";
+          ele.className = "btn btn-primary";
+          ele.dataset.liked = !isLiked + "";
+          
+          fetch(`/student/dashboard/report/${repid}?flag=${isLiked}`,{
+            method: 'POST', 
+            mode: 'cors', 
+            cache: 'no-cache',
+            credentials: 'same-origin', 
+            headers: {
+              'Content-Type': 'application/json'
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            }})
+                .then(response => {console.log(response)
+                  console.log("asjkdhgasdjhagdsjhasgdjhasdgjahsdg")});
+            return false;
+          }
+          else{
+            ele.innerHTML = "Support";
+          ele.className = "btn btn-outline-primary";
+          ele.dataset.liked = !isLiked;
+
+          fetch(`/student/dashboard/report/${repid}?flag=${isLiked}`,{
+          method: 'POST', 
+          mode: 'cors', 
+          cache: 'no-cache',
+          credentials: 'same-origin', 
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          }})
+          .then(response => {console.log(response)
+            console.log("asjkdhgasdjhagdsjhasgdjhasdgjahsdg")});
+          return false;
+            
+    }
+};
+
+
+
+// req.session.userunique = isValid.uid + isValid.dob + isValid.dept + "" // uid(rollno),dob,dept
+
+
 
 // {
 //     method: 'POST', // *GET, POST, PUT, DELETE, etc.

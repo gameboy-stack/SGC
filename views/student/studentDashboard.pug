@@ -17,6 +17,7 @@ block reqCss
         }
 block container
     - var arr = array;
+    - var lkarray = la;
 
     nav.navbar.navbar-expand-lg.navbar-light.mt-2
         .container-fluid
@@ -56,8 +57,8 @@ block container
                         .card-footer 
                             .d-flex.justify-content-center.p-1
                                 
-                                button.btn.btn-outline-primary#support(style="margin-right:2rem ;" data-liked="" data-repid="") Support    
+                                button.btn.btn-outline-primary#support(style="margin-right:2rem ;" class="support" data-liked=(lkarray.includes(rep._id))?"true":"false" data-repid=rep._id onclick="return clicked(this)") Support    
                                 a.btn.btn-outline-primary(href="/student/dashboard/"+rep._id) Read More
 block reqJs
-    script(src="../../public/js/like.js") 
+    script(src="../../static/js/like.js") 
 

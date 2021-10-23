@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const Users = require("../model/users");
 const Reports = require("../model/reports");
 const Responses = require("../model/responses");
+const ReportLike = require("../model/reportlike");
 
 
 const dbURI = db("usersHackathon","pass","hackathon");
@@ -52,6 +53,11 @@ const isValidUser = async (req,res,next) => {
             req.session.dept  = isValid.dept;
             req.session.uid  = isValid.uid;
             req.session.dob  = isValid.dob;
+            
+            const combination = isValid.uid + isValid.dob + isValid.dept + "" // uid(rollno),dob,dept
+            const useruniq = (cryptojs.MD5(combination)) +"";
+            
+            req.session.useruniq = useruniq;
             next();
         }
         else{
@@ -81,10 +87,13 @@ router.get("/dashboard",issessionedUser2,async (req,res) => {
     console.log(req.baseUrl+req.path)
     const boreports = await Reports.find({dept:req.session.dept});
     console.log(req.query);
+    const likedArrray = []
 
     if((!Object.keys(req.query).length) || ((req.query.gtype=="") && (req.query.gstatus==""))){
         res.render("student/studentDashboard",{
-            array:boreports})
+            array:boreports,
+            la:likedArrray
+        })
     }
     else{
             if((req.query.gtype!="") && (req.query.gstatus!="")){
@@ -94,7 +103,8 @@ router.get("/dashboard",issessionedUser2,async (req,res) => {
             });
             console.log(sortedreports);
             res.render("student/studentDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                la:likedArrray})
         }        
             else if((req.query.gtype!="") && (req.query.gstatus=="")){
 
@@ -104,7 +114,8 @@ router.get("/dashboard",issessionedUser2,async (req,res) => {
             });
             console.log(sortedreports);
             res.render("student/studentDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                la:likedArrray})
         }
             else{
                 const sortedreports = await boreports.filter((ele) =>{
@@ -112,21 +123,12 @@ router.get("/dashboard",issessionedUser2,async (req,res) => {
                 });
                 console.log(sortedreports);
             res.render("student/studentDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                la:likedArrray})
             }
     }
 });
 
-
-router.get("/dashboard/:id",issessionedUser2,async (req,res) => {
-        const repid = req.params.id;
-        const selectedreport = await Reports.findOne({_id:repid,dept:req.session.dept});
-        console.log(selectedreport);
-        res.render("student/studentSingleReport",{
-            array:selectedreport
-        })
-
-});
 
 router.post("/dashboard/:id",issessionedUser2,async (req,res) => {
         const repid = req.params.id;
@@ -135,6 +137,48 @@ router.post("/dashboard/:id",issessionedUser2,async (req,res) => {
         res.render("student/studentSingleReport",{
             array:selectedreport
         })
+
+});
+
+//######################################################################################
+
+
+router.post("/dashboard/report/:repid",issessionedUser2,async (req,res) => {
+
+        const repid = req.params.repid + "";
+        const useruniqid = req.session.useruniq;
+        const deptnme = req.session.dept;
+
+        const f = req.query.flag + "";
+        const flag = (f==="true");
+
+
+        console.log(req.session.user);
+        console.log(req.session.dob);
+        console.log(req.session.uid);
+        console.log();
+
+        if(!flag){
+
+        const temp = new ReportLike({
+            _id:repid,
+            dept:deptnme,
+            userid:useruniqid
+        });
+        const result = await temp.save();
+        console.log(result);
+        }
+        else{
+            const resul = await ReportLike.findOneAndRemove({
+                _id:repid,
+                dept:deptnme,
+                userid:useruniqid
+            });
+
+            console.log(resul);
+
+
+        }
 
 });
 
