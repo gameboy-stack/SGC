@@ -57,7 +57,7 @@ block container
                         .card-footer 
                             .d-flex.justify-content-center.p-1
                                 
-                                button.btn.btn-outline-primary#support(style="margin-right:2rem ;" class="support" data-liked=(lkarray.includes(rep._id))?"true":"false" data-repid=rep._id onclick="return clicked(this)") Support    
+                                button#support(style="margin-right:2rem ;" class=(lkarray.includes(rep._id))?"btn btn-primary":"btn btn-outline-primary" data-liked=(lkarray.includes(rep._id))?"true":"false" data-repid=rep._id onclick="return clicked(this)") #{(lkarray.includes(rep._id))?"Supported !!!":"Support"}    
                                 a.btn.btn-outline-primary(href="/student/dashboard/"+rep._id) Read More
 block reqJs
     script(src="../../static/js/like.js") 

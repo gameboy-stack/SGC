@@ -17,6 +17,7 @@ block reqCss
         }
 block container
     - var arr = array;
+    - var rlo = replikeobj; 
 
     nav.navbar.navbar-expand-lg.navbar-light.mt-2
         .container-fluid
@@ -55,5 +56,7 @@ block container
                                     cite(title='Source Title') #{"  &  " + rep.gstatus }                   
                         .card-footer 
                             .d-flex.justify-content-center.p-1  
+                                if rep._id in rlo
+                                    button#support.btn.btn-primary(style="margin-right:2rem ;" disabled) #{rlo[rep._id]}  Supported !!!    
                                 a.btn.btn-outline-primary(href="/member/dashboard/report/"+rep._id) Read More
 

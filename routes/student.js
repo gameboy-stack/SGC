@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const cryptojs = require('crypto-js');
+const nodemailer = require('nodemailer');
 
 const db = require("../model/db");
 const mongoose = require('mongoose');
@@ -17,6 +18,18 @@ const dbURI = db("usersHackathon","pass","hackathon");
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })  //connecting to MongoDB
     .then(console.log("database connected"))
     .catch(err => console.log(err));
+
+
+const transporter = nodemailer.createTransport({
+    port: 465,               // true for 465, false for other ports
+    host: "smtp.gmail.com",
+        auth: {
+            user: 'priv170216@gmail.com',
+            pass: 'gt173211@gmail.com123',
+            },
+    secure: true,
+});
+
 
 const issessionedUser1 = (req,res,next) => {
 
@@ -85,9 +98,18 @@ router.route("/")
 router.get("/dashboard",issessionedUser2,async (req,res) => {
     console.log("sessioned user " + req.session.user);
     console.log(req.baseUrl+req.path)
-    const boreports = await Reports.find({dept:req.session.dept});
+    const boreports = await Reports.find({
+        dept:req.session.dept
+    });
+    const likedreports = await ReportLike.find({
+        userid:req.session.useruniq,
+        dept:req.session.dept
+    })
     console.log(req.query);
-    const likedArrray = []
+    const likedArrray = likedreports.map((ele) => {
+        return ele._id
+    });
+    console.log(likedArrray)
 
     if((!Object.keys(req.query).length) || ((req.query.gtype=="") && (req.query.gstatus==""))){
         res.render("student/studentDashboard",{
@@ -130,7 +152,7 @@ router.get("/dashboard",issessionedUser2,async (req,res) => {
 });
 
 
-router.post("/dashboard/:id",issessionedUser2,async (req,res) => {
+router.get("/dashboard/:id",issessionedUser2,async (req,res) => {
         const repid = req.params.id;
         const selectedreport = await Reports.findOne({_id:repid,dept:req.session.dept});
         console.log(selectedreport);
@@ -144,22 +166,21 @@ router.post("/dashboard/:id",issessionedUser2,async (req,res) => {
 
 
 router.post("/dashboard/report/:repid",issessionedUser2,async (req,res) => {
+    
+    const repid = req.params.repid + "";
+    const useruniqid = req.session.useruniq;
+    const deptnme = req.session.dept;
+    
+    const f = req.query.flag + "";
+    const flag = (f==="true");
+    
+    
+    console.log(req.session.user);
+    console.log(req.session.dob);
+    console.log(req.session.uid);
 
-        const repid = req.params.repid + "";
-        const useruniqid = req.session.useruniq;
-        const deptnme = req.session.dept;
-
-        const f = req.query.flag + "";
-        const flag = (f==="true");
-
-
-        console.log(req.session.user);
-        console.log(req.session.dob);
-        console.log(req.session.uid);
-        console.log();
-
-        if(!flag){
-
+    if(!flag){
+        
         const temp = new ReportLike({
             _id:repid,
             dept:deptnme,
@@ -167,29 +188,30 @@ router.post("/dashboard/report/:repid",issessionedUser2,async (req,res) => {
         });
         const result = await temp.save();
         console.log(result);
-        }
-        else{
-            const resul = await ReportLike.findOneAndRemove({
-                _id:repid,
-                dept:deptnme,
-                userid:useruniqid
-            });
-
-            console.log(resul);
-
-
-        }
-
+    }
+    else{
+        const resul = await ReportLike.findOneAndRemove({
+            _id:repid,
+            dept:deptnme,
+            userid:useruniqid
+        });
+        
+        console.log(resul);
+        
+        
+    }
+    
 });
 
 
+//######################################################################################
 
 router.route("/report")
 .get(issessionedUser2, async (req,res) =>{
     const date = new Date();
     const month = date.getMonth() + 1;
     const todaydate = date.getFullYear() + "-" + month + "-" + date.getDate();
-
+    
     req.session.date = todaydate;
     
     const combination = req.session.user + req.session.dept + req.session.uid + date + ""// usrnme and dept and dob and doi
@@ -248,7 +270,36 @@ router.get("/response/:id",issessionedUser2,async (req,res) => {
 
 });
 
+router.get('/copass',(req,res) => { 
 
+    res.render("student/studentCOPassForm")
+
+});
+
+
+router.post('/copass',(req,res) => { 
+    
+    const subj = req.body.subj + "";
+    const msg = req.body.msg + "";
+
+    const mailData = {
+        from: 'priv170216@gmail.com',
+        to: "priv170216@gmail.com",
+        subject: subj,
+        text: msg,
+        html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer<br/>',
+    };
+
+    transporter.sendMail(mailData, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log("Mail Sent !!!!");        
+        res.redirect("/student")
+    });
+
+
+});
 
 router.get("/logout",(req,res) =>{
     req.session.destroy();

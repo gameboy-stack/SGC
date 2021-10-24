@@ -9,6 +9,7 @@ const student = require("./routes/student.js");
 const admin = require("./routes/admin.js");
 const { json } = require("express");
 
+
 // const dbURI = "mongodb+srv://YourUsername:YourPassword@YourClusterName.bnvaq.mongodb.net/YourDatabaseNamr?retryWrites=true&w=majority" // Your MongoDB Connection String
 
 // const ShortURL = require("./model/shorturl");
@@ -72,5 +73,7 @@ app.get('/',isSessionedUser2, isSessionedUser ,(req,res) => {
     // res.render("index",{year:(new Date()).getFullYear()});
     res.render("home",{sid:req.sessionID,s:json(req.session)});
 });
+
+
 
 app.listen(8080);

@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const Members = require("../model/members");
 const Reports = require("../model/reports");
 const Responses = require("../model/responses");
+const ReportLike = require("../model/reportlike");
+
 
 // const dbURI = db("usersHackathon","pass","hackathon");
 
@@ -84,11 +86,36 @@ router.get("/dashboard",issessionedmember2,async (req,res) => {
     console.log("sessioned member " + req.session.memid);
     console.log(req.baseUrl+req.path)
     const boreports = await Reports.find({dept:req.session.dept});
+    const reportslike = await ReportLike.find({
+        dept:req.session.dept
+    })
     console.log(req.query);
+    const likedArrray = reportslike.map((ele) => {
+        return ele._id
+    });
+
+    const uniquearr = [...new Set(likedArrray)];
+    const finalobj = {}
+    const temparr = reportslike.map( (ele) => {
+            var count = 0; 
+            const temp = uniquearr.map((ele2) => {
+                    if(ele2 == ele._id){
+                            count += 1;
+                    }
+                    finalobj[ele._id] = count; 
+                    return count;
+                    
+            })
+    })
+
+
+    console.log(finalobj);
 
     if((!Object.keys(req.query).length) || ((req.query.gtype=="") && (req.query.gstatus==""))){
         res.render("member/memberDashboard",{
-            array:boreports})
+            array:boreports,
+            replikeobj:finalobj
+        })
     }
     else{
             if((req.query.gtype!="") && (req.query.gstatus!="")){
@@ -98,7 +125,8 @@ router.get("/dashboard",issessionedmember2,async (req,res) => {
             });
             console.log(sortedreports);
             res.render("member/memberDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                replikeobj:finalobj})
         }        
             else if((req.query.gtype!="") && (req.query.gstatus=="")){
 
@@ -108,7 +136,8 @@ router.get("/dashboard",issessionedmember2,async (req,res) => {
             });
             console.log(sortedreports);
             res.render("member/memberDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                replikeobj:finalobj})
         }
             else{
                 const sortedreports = await boreports.filter((ele) =>{
@@ -116,7 +145,8 @@ router.get("/dashboard",issessionedmember2,async (req,res) => {
                 });
                 console.log(sortedreports);
             res.render("member/memberDashboard",{
-                array:sortedreports})
+                array:sortedreports,
+                replikeobj:finalobj})
             }
     }
 });
