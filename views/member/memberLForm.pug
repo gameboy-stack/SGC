@@ -27,12 +27,6 @@ block reqStyle
       min-width: 600px;
       padding: 30px;
       }
-      .h3{
-      color: rgb(94, 149, 197);
-      font-size: 30px;
-      font-weight: bold;
-      text-align: center;
-      }
       input{
       height: 48px;
       }
@@ -40,19 +34,24 @@ block container
     - var msg = errorMessage
     h1.d-flex.justify-content-center.mt-4 Member Login Page
 
-    form(name="members" action="/member" method="POST" )
-      .center
+    .center
         .signin
             .h3
-                h3 WELCOME
-            .form-group
-                label(for='memid') ID :
-                input#memid.form-control(type='text' name="memid" placeholder='Enter ID')
-            .form-group
-                label(for='password') Password :
-                input#password.form-control(type='password' name="password" placeholder='Password')
-            .form-group
-                label(for='dob') Date Of Birth :
-                input#dob.form-control(type='date' name="dob")
-            .button
-                button.btn.btn-outline-primary.btn-lg(type='submit') Login
+                h3.d-flex.justify-content-center WELCOME
+            form(name="members" action="/member" method="POST" )
+                .form-group
+                    label(for='memid') ID :
+                    input#memid.form-control(type='text' name="memid" placeholder='Enter ID')
+                .form-group
+                    label(for='password') Password :
+                    input#password.form-control(type='password' name="password" placeholder='Password')
+                .form-group
+                    label(for='dob') Date Of Birth :
+                    input#dob.form-control(type='date' name="dob")
+                .button
+                    button.btn.btn-outline-primary.btn-lg(type='submit') Login
+            hr
+            a.link-primary.d-flex.justify-content-end.mt-2.mb-1(href='/member/copass') Forget Password ?
+            if  err 
+                    hr
+                    pre.d-flex.justify-content-center.mt-2.mb-1.text-danger #{err} 

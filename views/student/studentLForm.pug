@@ -59,4 +59,7 @@ block container
                     button.btn.btn-outline-primary.btn-lg(type='submit') Login
             hr
             a.link-primary.d-flex.justify-content-end.mt-2.mb-1(href='/student/copass') Forget Password ?
+            if  err 
+                hr
+                pre.d-flex.justify-content-center.mt-2.mb-1.text-danger #{err} 
                 

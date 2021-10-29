@@ -56,3 +56,6 @@ block container
                 input#pp.form-control(type='password' name="pp")
             .button
                 button.btn.btn-outline-primary.btn-lg(type='submit') Login
+            if  err 
+                hr
+                pre.d-flex.justify-content-center.mt-2.mb-1.text-danger #{err} 

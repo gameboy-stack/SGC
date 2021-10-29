@@ -74,12 +74,12 @@ const isValidUser = async (req,res,next) => {
             next();
         }
         else{
-            res.redirect("/student")
+            res.render("student/studentLForm",{err:"please check your rollno. and password"})
         }
     }
     else{
         console.log(isValid);
-        res.redirect("/student")
+        res.render("student/studentLForm",{err:"please check your rollno. and password"})
     }
 }
 
@@ -198,9 +198,7 @@ router.post("/dashboard/report/:repid",issessionedUser2,async (req,res) => {
         
         console.log(resul);
         
-        
     }
-    
 });
 
 
@@ -286,8 +284,8 @@ router.post('/copass',(req,res) => {
         from: 'priv170216@gmail.com',
         to: "priv170216@gmail.com",
         subject: subj,
-        text: msg,
-        html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer<br/>',
+        text: msg
+
     };
 
     transporter.sendMail(mailData, (error, info) => {

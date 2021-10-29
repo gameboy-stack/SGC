@@ -4,11 +4,9 @@ const cryptojs = require('crypto-js');
 
 const db = require("../model/db");
 const mongoose = require('mongoose');
-
+const Members = require("../model/members");
 const Users = require("../model/users");
-const Reports = require("../model/reports");
-const Responses = require("../model/responses");
-const ReportLike = require("../model/reportlike");
+
 
 
 const dbURI = db("usersHackathon","pass","hackathon");
@@ -60,7 +58,7 @@ const isValidUser = async (req,res,next) => { //  sha256 hash => combination of 
             next();
         }
         else{
-            res.redirect("/admin")
+            res.render("admin/adminLForm",{err:"please check your username and password"})
         }
 }
 
@@ -96,7 +94,7 @@ const isValidSecretPassphrase = (req,res,next) => {
 
     const userpassp =  (cryptojs.MD5(userinppp)) + "";
 
-    if(secretpassphrase == userinppp){
+    if(secretpassphrase === userinppp){
         next();
     }
     else{
@@ -107,13 +105,23 @@ const isValidSecretPassphrase = (req,res,next) => {
 
 
 router.post("/copform",isValidSecretPassphrase,async (req,res) =>{
+    const unqid = (req.body.uniqid).slice(2,-3);
+    if(unqid == "19"){
+        const deptnme = (req.body.dept + "").toLowerCase();
 
-    const deptnme = (req.body.dept + "").toLowerCase();
-
-    const temp = await Users.findOneAndUpdate({uid:req.body.uniqid+"",dept:deptnme},{ $set: { passw: req.body.newpassw + "" }});
-    console.log(temp);
-    console.log("submitted")
+        const temp = await Users.findOneAndUpdate({uid:req.body.uniqid+"",dept:deptnme},{ $set: { passw: req.body.newpassw + "" }});
+        console.log(temp);
+        console.log("submitted")
     res.render("admin/adminCOPForm")
+    }
+    else{
+        const deptnme = (req.body.dept + "").toLowerCase();
+
+        const temp = await Members.findOneAndUpdate({memid:req.body.uniqid+"",dept:deptnme},{ $set: { passw: req.body.newpassw + "" }});
+        console.log(temp);
+        console.log("submitted member")
+    res.render("admin/adminCOPForm")
+    }
 
 });
 
@@ -123,11 +131,6 @@ router.get("/logout",(req,res) =>{
     req.session.destroy();
     res.redirect("/");
 });
-
-
-
-
-module.exports = router;
 
 
 

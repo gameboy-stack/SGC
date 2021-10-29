@@ -44,14 +44,9 @@ const issessionedmember2 = (req,res,next) => {
 const isValidmember = async (req,res,next) => { //memityyyy 19itxxx - 2 -3 - 3 -4
     const memidv = req.body.memid + ""
     const deptnme = memidv.slice(3,-4);
-    const isValid = await Members.findOne({memid:memidv.toLowerCase(),dept:deptnme});
+    const isValid = await Members.findOne({memid:memidv,dept:deptnme});
 
-    console.log(req.body.memid+req.body.password+req.body.dob);
-    console.log(isValid)
-
-    if(isValid){    //3,--4
-
-        if((isValid.memid == req.body.memid) && ( isValid.passw == req.body.password) && (isValid.dob == req.body.dob)){
+    if((isValid.memid == req.body.memid) && ( isValid.passw == req.body.password) && (isValid.dob == req.body.dob)){
             console.log(isValid);
             req.session.memid  = isValid.memid;
             req.session.dept  = isValid.dept;
@@ -59,14 +54,10 @@ const isValidmember = async (req,res,next) => { //memityyyy 19itxxx - 2 -3 - 3 -
             next();
         }
         else{
-            res.redirect("/member")
+            res.render("member/memberLForm",{err:"please enter correct memid and pass"})
         }
-    }
-    else{
-        console.log(isValid);
-        res.redirect("/member")
-    }
 }
+
 
 router.route("/")
 .get(issessionedmember1, async (req,res) => { 
@@ -228,6 +219,36 @@ router.route("/response")
 })
 
 
+
+router.get('/copass',(req,res) => { 
+    res.render("member/memberCOPassForm")
+
+});
+
+
+router.post('/copass',(req,res) => { 
+    
+    const subj = req.body.subj + "";
+    const msg = req.body.msg + "";
+
+    const mailData = {
+        from: 'priv170216@gmail.com',
+        to: "priv170216@gmail.com",
+        subject: subj,
+        text: msg
+
+    };
+
+    transporter.sendMail(mailData, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log("Mail Sent !!!!");        
+        res.redirect("/member")
+    });
+
+
+});
 
 
 router.get("/logout",(req,res) =>{
