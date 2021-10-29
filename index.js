@@ -2,7 +2,6 @@ const express = require("express");
 const app =  express();
 const bodyParser = require('body-parser');
 const path = require("path");
-const mongoose = require('mongoose');
 const session = require('express-session');
 const member = require("./routes/member.js");
 const student = require("./routes/student.js");
@@ -10,13 +9,6 @@ const admin = require("./routes/admin.js");
 const { json } = require("express");
 const nodemailer = require('nodemailer');
 
-
-
-
-
-// const dbURI = "mongodb+srv://YourUsername:YourPassword@YourClusterName.bnvaq.mongodb.net/YourDatabaseNamr?retryWrites=true&w=majority" // Your MongoDB Connection String
-
-// const ShortURL = require("./model/shorturl");
 
 app.set('etag', false);
 app.set("view engine", "pug");
@@ -42,9 +34,7 @@ app.use("/member",member);
 app.use("/student",student);
 app.use("/admin",admin);
 
-// mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })  //connecting to MongoDB
-//     .then(app.listen(8080))
-//     .catch(err => console.log(err));
+
 
 const isSessionedUser = (req,res,next) => {
     
@@ -73,17 +63,17 @@ const isSessionedUser2 = (req,res,next) => {
     }
 } 
 const transporter = nodemailer.createTransport({
-    port: 465,               // true for 465, false for other ports
+    port: 465,             
     host: "smtp.gmail.com",
         auth: {
-            user: 'priv170216@gmail.com',
-            pass: 'gt173211@gmail.com123',
+            user: 'gmailadd',
+            pass: 'gmailpass',
             },
     secure: true,
 });
 
 app.get('/',isSessionedUser2, isSessionedUser ,(req,res) => {
-    // res.render("index",{year:(new Date()).getFullYear()});
+
     res.render("home",{sid:req.sessionID,s:json(req.session)});
 });
 

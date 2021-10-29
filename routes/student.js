@@ -13,15 +13,14 @@ const ReportLike = require("../model/reportlike");
 
 const dbURI = db("usersHackathon","pass","hackathon");
 
-// const usercred = {username:"just",password:"pass"}; 
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })  //connecting to MongoDB
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })  
     .then(console.log("database connected"))
     .catch(err => console.log(err));
 
 
 const transporter = nodemailer.createTransport({
-    port: 465,               // true for 465, false for other ports
+    port: 465,               
     host: "smtp.gmail.com",
         auth: {
             user: 'priv170216@gmail.com',
@@ -67,7 +66,7 @@ const isValidUser = async (req,res,next) => {
             req.session.uid  = isValid.uid;
             req.session.dob  = isValid.dob;
             
-            const combination = isValid.uid + isValid.dob + isValid.dept + "" // uid(rollno),dob,dept
+            const combination = isValid.uid + isValid.dob + isValid.dept + ""
             const useruniq = (cryptojs.MD5(combination)) +"";
             
             req.session.useruniq = useruniq;
@@ -167,38 +166,6 @@ router.get("/dashboard/:id",issessionedUser2,async (req,res) => {
 
 router.post("/dashboard/report/:repid",issessionedUser2,async (req,res) => {
     
-    const repid = req.params.repid + "";
-    const useruniqid = req.session.useruniq;
-    const deptnme = req.session.dept;
-    
-    const f = req.query.flag + "";
-    const flag = (f==="true");
-    
-    
-    console.log(req.session.user);
-    console.log(req.session.dob);
-    console.log(req.session.uid);
-
-    if(!flag){
-        
-        const temp = new ReportLike({
-            _id:repid,
-            dept:deptnme,
-            userid:useruniqid
-        });
-        const result = await temp.save();
-        console.log(result);
-    }
-    else{
-        const resul = await ReportLike.findOneAndRemove({
-            _id:repid,
-            dept:deptnme,
-            userid:useruniqid
-        });
-        
-        console.log(resul);
-        
-    }
 });
 
 
@@ -212,7 +179,7 @@ router.route("/report")
     
     req.session.date = todaydate;
     
-    const combination = req.session.user + req.session.dept + req.session.uid + date + ""// usrnme and dept and dob and doi
+    const combination = req.session.user + req.session.dept + req.session.uid + date + ""
     const formid = (cryptojs.MD5(combination)) +"";
     
     req.session.fuid = formid;

@@ -3,20 +3,12 @@ const router = express.Router();
 const cryptojs = require('crypto-js');
 
 const db = require("../model/db");
-const mongoose = require('mongoose');
 const Members = require("../model/members");
 const Reports = require("../model/reports");
 const Responses = require("../model/responses");
 const ReportLike = require("../model/reportlike");
 
 
-// const dbURI = db("usersHackathon","pass","hackathon");
-
-// // const membercred = {membername:"just",password:"pass"}; 
-
-// mongoose.createConnection(dbURI, { useNewUrlParser: true, useUnifiedTopology: true }); //connecting to MongoDB
-    // .then(console.log("database connected - member"))
-    // .catch(err => console.log(err));
 
 const issessionedmember1 = (req,res,next) => {
 
@@ -41,7 +33,7 @@ const issessionedmember2 = (req,res,next) => {
     }
 } 
 
-const isValidmember = async (req,res,next) => { //memityyyy 19itxxx - 2 -3 - 3 -4
+const isValidmember = async (req,res,next) => {
     const memidv = req.body.memid + ""
     const deptnme = memidv.slice(3,-4);
     const isValid = await Members.findOne({memid:memidv,dept:deptnme});
@@ -64,7 +56,7 @@ router.route("/")
 
     res.render("member/memberLForm",{sid:req.sessionID})
 })
-.post(isValidmember,(req,res) => { // uid - memityyy
+.post(isValidmember,(req,res) => { 
 
         req.session.memberpath = req.baseUrl+req.path+"";
         res.redirect("/member/dashboard");
@@ -76,70 +68,13 @@ router.get("/dashboard",issessionedmember2,async (req,res) => {
     
     console.log("sessioned member " + req.session.memid);
     console.log(req.baseUrl+req.path)
-    const boreports = await Reports.find({dept:req.session.dept});
-    const reportslike = await ReportLike.find({
-        dept:req.session.dept
-    })
-    console.log(req.query);
-    const likedArrray = reportslike.map((ele) => {
-        return ele._id
-    });
-
-    const uniquearr = [...new Set(likedArrray)];
-    const finalobj = {}
-    const temparr = reportslike.map( (ele) => {
-            var count = 0; 
-            const temp = uniquearr.map((ele2) => {
-                    if(ele2 == ele._id){
-                            count += 1;
-                    }
-                    finalobj[ele._id] = count; 
-                    return count;
-                    
-            })
-    })
-
-
-    console.log(finalobj);
 
     if((!Object.keys(req.query).length) || ((req.query.gtype=="") && (req.query.gstatus==""))){
-        res.render("member/memberDashboard",{
-            array:boreports,
-            replikeobj:finalobj
-        })
+
     }
     else{
-            if((req.query.gtype!="") && (req.query.gstatus!="")){
-
-                const sortedreports = await boreports.filter((ele) =>{
-                return (ele.gtype==req.query.gtype)&&(ele.gstatus==req.query.gstatus);
-            });
-            console.log(sortedreports);
-            res.render("member/memberDashboard",{
-                array:sortedreports,
-                replikeobj:finalobj})
-        }        
-            else if((req.query.gtype!="") && (req.query.gstatus=="")){
-
-                const sortedreports = await boreports.filter((ele) =>{
-                return (ele.gtype==req.query.gtype);
-                    
-            });
-            console.log(sortedreports);
-            res.render("member/memberDashboard",{
-                array:sortedreports,
-                replikeobj:finalobj})
-        }
-            else{
-                const sortedreports = await boreports.filter((ele) =>{
-                return (ele.gstatus==req.query.gstatus);
-                });
-                console.log(sortedreports);
-            res.render("member/memberDashboard",{
-                array:sortedreports,
-                replikeobj:finalobj})
-            }
     }
+            
 });
 
 
@@ -156,13 +91,7 @@ router.get("/dashboard/report/:id",issessionedmember2,async (req,res) => {
 
 router.route("/reports")
 .get(issessionedmember2, async (req,res) =>{
-    
-    const allrep = await Reports.find({dept:req.session.dept});
-    
-    res.render("member/memberGReports",{
-        array:JSON.stringify(allrep),
-    })
-    
+
     
 })
 .post(async (req,res) => {
@@ -191,7 +120,7 @@ router.route("/response")
 
     req.session.date = todaydate;
     
-    const combination = req.session.memid + req.session.dept + date + ""// usrnme and dept and dob and doi
+    const combination = req.session.memid + req.session.dept + date + ""
     const resid = (cryptojs.MD5(combination)) +"";
     
     req.session.resid = resid;

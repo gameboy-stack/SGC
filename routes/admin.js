@@ -9,11 +9,11 @@ const Users = require("../model/users");
 
 
 
-const dbURI = db("usersHackathon","pass","hackathon");
+const dbURI = db("username","yourpass","dbname");
 
-// const usercred = {username:"just",password:"pass"}; 
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })  //connecting to MongoDB
+
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true }) 
 .then(console.log("database connected"))
 .catch(err => console.log(err));
 
@@ -40,7 +40,7 @@ const issessionedUser2 = (req,res,next) => {
     }
 } 
 
-const isValidUser = async (req,res,next) => { //  sha256 hash => combination of admn , pass and today date(yyyy-mm-dd)
+const isValidUser = async (req,res,next) => { 
     
     const date = new Date();
     const month = date.getMonth() + 1;
@@ -62,14 +62,14 @@ const isValidUser = async (req,res,next) => { //  sha256 hash => combination of 
         }
 }
 
-router.route("/")       //  sha256 hash => combination of yyyyddmm and permanent secret key
+router.route("/")       
 .get(issessionedUser1, async (req,res) => { 
     res.render('admin/adminLForm')
 })
-.post(isValidUser,(req,res) => { // uid
+.post(isValidUser,(req,res) => { 
     
     req.session.userpath = req.baseUrl+req.path+"";
-    // res.redirect("/admin/dashboard");
+
     res.redirect("/admin/copform")
 });
 
@@ -82,9 +82,7 @@ router.get("/copform",issessionedUser2,(req,res) => {
 
 const isValidSecretPassphrase = (req,res,next) => {
 
-    const  todaydate = req.session.todaydate;
 
-    const comb = "admin" + "pass" + todaydate;
 
     const passsha256 = (cryptojs.SHA256(comb)) +"";
 

@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const responseSchema = new Schema({
     _id: {
-        type:String,//maybe hashed of usrnme and dept and dob and doi
+        type:String,
         required:true,
     },
     fuid:{

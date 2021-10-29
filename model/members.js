@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const memberSchema = new Schema({
-    // _id: {
-    //     type:String,
-    // },
+
     memid:{
         type:String,
         required:true,
